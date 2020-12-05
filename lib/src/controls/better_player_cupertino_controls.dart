@@ -841,23 +841,28 @@ class _BetterPlayerCupertinoControlsState
     );
   }
 
-  Widget _buildTopBar(
+  AnimatedOpacity _buildTopBar(
     Color backgroundColor,
     Color iconColor,
     double barHeight,
     double buttonPadding,
   ) {
-    return Container(
-      height: barHeight,
-      margin: EdgeInsets.only(
-        top: marginSize,
-        right: marginSize,
-        left: marginSize,
-      ),
-      child: Row(
-        children: <Widget>[
-          _controlsConfiguration.customTopBarWidget,
-        ],
+    return AnimatedOpacity(
+      opacity: _hideStuff ? 0.0 : 1.0,
+      duration: _controlsConfiguration.controlsHideTime,
+      onEnd: _onPlayerHide,
+      child: Container(
+        height: barHeight,
+        margin: EdgeInsets.only(
+          top: marginSize,
+          right: marginSize,
+          left: marginSize,
+        ),
+        child: Row(
+          children: <Widget>[
+            _controlsConfiguration.customTopBarWidget,
+          ],
+        ),
       ),
     );
   }
