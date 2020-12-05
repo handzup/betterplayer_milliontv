@@ -6,20 +6,18 @@ environment:
   sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
-  better_player: any
-  #better_player:
-  #  path: ../
+  better_player:
+   path: ../
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
   path_provider: ^1.6.5
   flutter_widgets: ^0.1.12
-
+  flutter_svg: ^0.19.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
 
 flutter:
   assets:

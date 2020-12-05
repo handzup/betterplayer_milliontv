@@ -1,6 +1,7 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class HlsTracksPage extends StatefulWidget {
   @override
@@ -14,11 +15,27 @@ class _HlsTracksPageState extends State<HlsTracksPage> {
   void initState() {
     BetterPlayerConfiguration betterPlayerConfiguration =
         BetterPlayerConfiguration(
+      controlsConfiguration: BetterPlayerControlsConfiguration(
+          rotateWidget: SvgPicture.asset(
+            'assets/rotate_video.svg',
+          ),
+          qualityIcon: SvgPicture.asset(
+            'assets/video_quality.svg',
+            height: 20,
+            width: 20,
+          ),
+          textStyle: TextStyle(
+              color: Colors.white, fontFamily: 'Avenir', fontSize: 15),
+          customTopBarWidget: Text(
+            'tetxt',
+            style: TextStyle(fontSize: 16, color: Colors.white),
+          )),
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.NETWORK, Constants.hlsTestStreamUrl,
+        BetterPlayerDataSourceType.NETWORK,
+        'https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/master.m3u8',
         useHlsSubtitles: true);
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
@@ -28,24 +45,10 @@ class _HlsTracksPageState extends State<HlsTracksPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("HLS tracks"),
-      ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              "Player with HLS stream which loads tracks from HLS."
-              " You can choose tracks by using overflow menu (3 dots in right corner).",
-              style: TextStyle(fontSize: 16),
-            ),
-          ),
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: BetterPlayer(controller: _betterPlayerController),
-          ),
+          BetterPlayer(controller: _betterPlayerController),
         ],
       ),
     );

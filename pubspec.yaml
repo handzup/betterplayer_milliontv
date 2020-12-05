@@ -20,11 +20,19 @@ dependencies:
   flutter_hls_parser: ^1.0.0
   visibility_detector: ^0.1.5
   path_provider: ^1.6.24
+  flutter_portal: ^0.3.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+ 
 
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+ 
+
+  # To add assets to your application, add an assets section, like this:
+  
 flutter:
   plugin:
     platforms:
@@ -33,3 +41,4 @@ flutter:
         pluginClass: BetterPlayerPlugin
       ios:
         pluginClass: FLTBetterPlayerPlugin
+ 

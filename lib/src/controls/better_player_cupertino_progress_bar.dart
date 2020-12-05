@@ -129,7 +129,7 @@ class _ProgressBarPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final barHeight = 5.0;
+    final barHeight = 2.0;
     final handleHeight = 6.0;
     final baseOffset = size.height / 2 - barHeight / 2.0;
 

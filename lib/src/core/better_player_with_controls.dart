@@ -12,6 +12,7 @@ import 'package:better_player/src/subtitles/better_player_subtitles_configuratio
 import 'package:better_player/src/subtitles/better_player_subtitles_drawer.dart';
 import 'package:better_player/src/video_player/video_player.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_portal/flutter_portal.dart';
 
 class BetterPlayerWithControls extends StatefulWidget {
   final BetterPlayerController controller;
@@ -88,14 +89,23 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
               BetterPlayerUtils.calculateAspectRatio(context);
     }
 
-    return Center(
-      child: Container(
-        width: double.infinity,
-        color: Colors.black,
-        child: AspectRatio(
-          aspectRatio: aspectRatio,
-          child: _buildPlayerWithControls(betterPlayerController, context),
-        ),
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height,
+          maxWidth: MediaQuery.of(context).size.width),
+      child: Column(
+        children: [
+          Expanded(
+            child: Container(
+              color: Colors.black,
+              child: AspectRatio(
+                aspectRatio: aspectRatio,
+                child:
+                    _buildPlayerWithControls(betterPlayerController, context),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -143,19 +153,12 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     BuildContext context,
     BetterPlayerController betterPlayerController,
   ) {
-    return controlsConfiguration.showControls
-        ? controlsConfiguration.customControls != null
-            ? controlsConfiguration.customControls
-            : Platform.isAndroid
-                ? BetterPlayerMaterialControls(
-                    onControlsVisibilityChanged: onControlsVisibilityChanged,
-                    controlsConfiguration: controlsConfiguration,
-                  )
-                : BetterPlayerCupertinoControls(
-                    onControlsVisibilityChanged: onControlsVisibilityChanged,
-                    controlsConfiguration: controlsConfiguration,
-                  )
-        : const SizedBox();
+    return Portal(
+          child: BetterPlayerCupertinoControls(
+        onControlsVisibilityChanged: onControlsVisibilityChanged,
+        controlsConfiguration: controlsConfiguration,
+      ),
+    );
   }
 
   void onControlsVisibilityChanged(bool state) {

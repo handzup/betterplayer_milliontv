@@ -50,16 +50,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void onShowMoreClicked() {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return SafeArea(
-          top: false,
-          bottom: true,
-          child: _buildMoreOptionsList(),
-        );
-      },
-    );
+    _showQualitiesSelectionWidget();
   }
 
   Widget _buildMoreOptionsList() {
@@ -68,20 +59,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       child: Container(
         child: Column(
           children: [
-            if (betterPlayerControlsConfiguration.enablePlaybackSpeed)
-              _buildMoreOptionsListRow(
-                  betterPlayerControlsConfiguration.playbackSpeedIcon,
-                  translations.overflowMenuPlaybackSpeed, () {
-                Navigator.of(context).pop();
-                _showSpeedChooserWidget();
-              }),
-            if (betterPlayerControlsConfiguration.enableSubtitles)
-              _buildMoreOptionsListRow(
-                  betterPlayerControlsConfiguration.subtitlesIcon,
-                  translations.overflowMenuSubtitles, () {
-                Navigator.of(context).pop();
-                _showSubtitlesSelectionWidget();
-              }),
+ 
             if (betterPlayerControlsConfiguration.enableQualities)
               _buildMoreOptionsListRow(
                   betterPlayerControlsConfiguration.qualitiesIcon,
@@ -89,18 +67,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
                 Navigator.of(context).pop();
                 _showQualitiesSelectionWidget();
               }),
-            if (betterPlayerControlsConfiguration
-                .overflowMenuCustomItems?.isNotEmpty)
-              ...betterPlayerControlsConfiguration.overflowMenuCustomItems.map(
-                (customItem) => _buildMoreOptionsListRow(
-                  customItem.icon,
-                  customItem.title,
-                  () {
-                    Navigator.of(context).pop();
-                    customItem.onClicked?.call();
-                  },
-                ),
-              )
+            
           ],
         ),
       ),

@@ -10,6 +10,8 @@ class BetterPlayerControlsConfiguration {
 
   ///Color of texts
   final Color textColor;
+  final Widget customTopBarWidget;
+  final Widget rotateWidget;
 
   ///Color of icons
   final Color iconsColor;
@@ -19,6 +21,7 @@ class BetterPlayerControlsConfiguration {
 
   ///Icon of pause
   final IconData pauseIcon;
+  final Widget qualityIcon;
 
   ///Icon of mute
   final IconData muteIcon;
@@ -119,9 +122,13 @@ class BetterPlayerControlsConfiguration {
 
   ///Time which will be used once user uses rewind and forward
   final int skipsTimeInMilliseconds;
-
+  final TextStyle textStyle;
   const BetterPlayerControlsConfiguration(
       {this.controlBarColor = Colors.black87,
+      this.textStyle,
+      this.rotateWidget,
+      this.qualityIcon,
+      this.customTopBarWidget,
       this.textColor = Colors.white,
       this.iconsColor = Colors.white,
       this.playIcon = Icons.play_arrow,

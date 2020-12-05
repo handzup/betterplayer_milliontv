@@ -6,9 +6,9 @@ class Constants {
   static const String fileTestVideoUrl = "testvideo.mp4";
   static const String fileExampleSubtitlesUrl = "example_subtitles.srt";
   static const String hlsTestStreamUrl =
-      "https://mtoczko.github.io/hls-test-streams/test-group/playlist.m3u8";
+      "https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/master.m3u8";
   static const String hlsPlaylistUrl =
-      "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8";
+      "https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/master.m3u8";
   static const Map<String, String> exampleResolutionsUrls = {
     "LOW":
         "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4",

@@ -120,9 +120,13 @@ class BetterPlayerState extends State<BetterPlayer>
 
   @override
   Widget build(BuildContext context) {
-    return BetterPlayerControllerProvider(
-      controller: widget.controller,
-      child: _buildPlayer(),
+    return Column(
+      children: [
+        BetterPlayerControllerProvider(
+          controller: widget.controller,
+          child: _buildPlayer(),
+        ),
+      ],
     );
   }
 
@@ -134,7 +138,7 @@ class BetterPlayerState extends State<BetterPlayer>
       resizeToAvoidBottomPadding: false,
       body: Container(
         alignment: Alignment.center,
-        color: Colors.black,
+        color: Colors.red,
         child: controllerProvider,
       ),
     );
@@ -231,8 +235,12 @@ class BetterPlayerState extends State<BetterPlayer>
       key: Key("${widget.controller.hashCode}_key"),
       onVisibilityChanged: (VisibilityInfo info) =>
           widget.controller.onPlayerVisibilityChanged(info.visibleFraction),
-      child: BetterPlayerWithControls(
-        controller: widget.controller,
+      child: Column(
+        children: [
+          BetterPlayerWithControls(
+            controller: widget.controller,
+          ),
+        ],
       ),
     );
   }
