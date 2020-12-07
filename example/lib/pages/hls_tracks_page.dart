@@ -15,6 +15,7 @@ class _HlsTracksPageState extends State<HlsTracksPage> {
   void initState() {
     BetterPlayerConfiguration betterPlayerConfiguration =
         BetterPlayerConfiguration(
+          autoPlay: true,
       controlsConfiguration: BetterPlayerControlsConfiguration(
           exitCallBack: exit,
           rotateWidget: SvgPicture.asset(

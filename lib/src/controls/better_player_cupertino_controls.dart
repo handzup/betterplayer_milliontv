@@ -331,7 +331,14 @@ class _BetterPlayerCupertinoControlsState
         reverseDuration: Duration(milliseconds: 400),
       );
     }
+
     super.didChangeDependencies();
+  }
+
+  void playAnimatedIcon() async {
+    if (await _betterPlayerController.isPlaying()) {
+      playPauseIconAnimationController.forward();
+    }
   }
 
   AnimatedOpacity _buildBottomBar(
@@ -1230,6 +1237,7 @@ class _BetterPlayerCupertinoControlsState
 
   void _updateState() {
     if (this.mounted) {
+      playAnimatedIcon();
       if (!this._hideStuff ||
           isVideoFinished(_controller.value) ||
           _wasLoading ||
