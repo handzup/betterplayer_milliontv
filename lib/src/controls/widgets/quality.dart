@@ -33,7 +33,7 @@ class ItemCard extends StatelessWidget {
               SizedBox(
                 width: 14,
               ),
-              Text('${track.width}p',
+              Text(track == null ? 'Auto' : '${track.width}p',
                   overflow: TextOverflow.clip,
                   maxLines: 1,
                   style: Theme.of(context).textTheme.bodyText1.copyWith(

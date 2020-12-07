@@ -793,6 +793,7 @@ class _BetterPlayerCupertinoControlsState
         betterPlayerController.betterPlayerDataSource.hlsTrackNames ?? List();
     List<BetterPlayerHlsTrack> tracks =
         betterPlayerController.betterPlayerTracks;
+
     var children = List<Resolution>();
     // for (var index = 0; index < tracks.length; index++) {
     //   var preferredName = trackNames.length > index ? trackNames[index] : null;
@@ -869,35 +870,71 @@ class _BetterPlayerCupertinoControlsState
                             //   ),
                           ),
                           Positioned(
-                              left: 12,
-                              child: Stack(
-                                alignment: Alignment.bottomCenter,
-                                children: <Widget>[
-                                  // Stroked text as border.
-                                  Text(
-                                    selectedTrack != null
-                                        ? '${selectedTrack.width}p'
-                                        : 'Auto',
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      foreground: Paint()
-                                        ..style = PaintingStyle.stroke
-                                        ..strokeWidth = 6
-                                        ..color = AppTheme.backgroundColor,
-                                    ),
-                                  ),
-                                  // Solid text as fill.
-                                  Text(
-                                    selectedTrack != null
-                                        ? '${selectedTrack.width}p'
-                                        : 'Auto',
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      color: AppTheme.activeButtonColor,
-                                    ),
-                                  ),
-                                ],
-                              ))
+                            left: 12,
+                            child: Column(
+                              children: [
+                                children.isEmpty
+                                    ? Stack(
+                                        alignment: Alignment.bottomCenter,
+                                        children: <Widget>[
+                                          // Stroked text as border.
+                                          Text(
+                                            selectedTrack != null
+                                                ? '${selectedTrack.width}p'
+                                                : 'Auto',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              foreground: Paint()
+                                                ..style = PaintingStyle.stroke
+                                                ..strokeWidth = 6
+                                                ..color =
+                                                    AppTheme.backgroundColor,
+                                            ),
+                                          ),
+                                          // Solid text as fill.
+                                          Text(
+                                            selectedTrack != null
+                                                ? '${selectedTrack.width}p'
+                                                : 'Auto',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              color: AppTheme.activeButtonColor,
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    : Stack(
+                                        alignment: Alignment.bottomCenter,
+                                        children: <Widget>[
+                                          // Stroked text as border.
+                                          Text(
+                                            selectedResolution != null
+                                                ? '${selectedResolution.name}p'
+                                                : 'Auto',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              foreground: Paint()
+                                                ..style = PaintingStyle.stroke
+                                                ..strokeWidth = 6
+                                                ..color =
+                                                    AppTheme.backgroundColor,
+                                            ),
+                                          ),
+                                          // Solid text as fill.
+                                          Text(
+                                            selectedResolution != null
+                                                ? '${selectedResolution.name}p'
+                                                : 'Auto',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              color: AppTheme.activeButtonColor,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                              ],
+                            ),
+                          )
                         ],
                       ),
                     ),
@@ -1112,7 +1149,11 @@ class _BetterPlayerCupertinoControlsState
   @override
   void cancelAndRestartTimer() {
     _hideTimer?.cancel();
-
+    if (_showMenu) {
+      setState(() {
+        _showMenu = false;
+      });
+    }
     setState(() {
       _hideStuff = false;
 
@@ -1228,8 +1269,9 @@ class _BetterPlayerCupertinoControlsState
   }
 
   void _startHideTimer() {
-    _hideTimer = Timer(const Duration(seconds: 3), () {
+    _hideTimer = Timer(const Duration(seconds: 5), () {
       setState(() {
+        _showMenu = false;
         _hideStuff = true;
       });
     });
