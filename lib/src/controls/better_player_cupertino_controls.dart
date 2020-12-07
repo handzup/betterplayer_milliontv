@@ -592,11 +592,18 @@ class _BetterPlayerCupertinoControlsState
                                 size: 35.0,
                                 color: Colors.grey,
                               )
-                            : AnimatedIcon(
-                                icon: AnimatedIcons.play_pause,
-                                progress: playPauseIconAnimationController,
-                                size: 35.0,
-                                color: Colors.grey,
+                            : Stack(
+                                children: [
+                                  !_betterPlayerController.isVideoInitialized()
+                                      ? _buildLoadingWidget()
+                                      : AnimatedIcon(
+                                          icon: AnimatedIcons.play_pause,
+                                          progress:
+                                              playPauseIconAnimationController,
+                                          size: 35.0,
+                                          color: Colors.grey,
+                                        ),
+                                ],
                               ),
                         onPressed: () {
                           _playPause();
@@ -1012,45 +1019,49 @@ class _BetterPlayerCupertinoControlsState
       child: SafeArea(
         child: Container(
           height: barHeight,
-          margin: EdgeInsets.only(
-            right: 12,
-            left: 12,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () => back(),
-                child: Container(
-                  child: Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
+          child: AppBar(
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            automaticallyImplyLeading: false,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => back(),
+                  child: Container(
+                    child: Icon(
+                      Icons.arrow_back,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: MarqueeText(
-                          text: _controlsConfiguration.text,
-                          style: Theme.of(context).textTheme.bodyText1.copyWith(
-                              fontSize: 16, fontWeight: FontWeight.w600),
-                          speed: 10,
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: MarqueeText(
+                            text: _controlsConfiguration.text,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1
+                                .copyWith(
+                                    fontSize: 16, fontWeight: FontWeight.w600),
+                            speed: 10,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              _betterPlayerController.isLiveStream()
-                  ? _controlsConfiguration.customTopBarWidget
-                  : SizedBox.shrink()
-            ],
+                _betterPlayerController.isLiveStream()
+                    ? _controlsConfiguration.customTopBarWidget
+                    : SizedBox.shrink()
+              ],
+            ),
           ),
         ),
       ),
