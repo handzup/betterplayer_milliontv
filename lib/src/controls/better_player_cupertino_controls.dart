@@ -899,46 +899,47 @@ class _BetterPlayerCupertinoControlsState
       opacity: _hideStuff ? 0.0 : 1.0,
       duration: _controlsConfiguration.controlsHideTime,
       onEnd: _onPlayerHide,
-      child: Container(
-        height: barHeight,
-        margin: EdgeInsets.only(
-          top: marginSize,
-          right: 16,
-          left: 16,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () => Navigator.of(context).pop(),
-              child: Container(
-                child: Icon(
-                  Icons.arrow_back,
-                  color: Colors.white,
+      child: SafeArea(
+        child: Container(
+          height: barHeight,
+          margin: EdgeInsets.only(
+            right: 12,
+            left: 12,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => Navigator.of(context).pop(),
+                child: Container(
+                  child: Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                  ),
                 ),
               ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: MarqueeText(
-                        text: _controlsConfiguration.text,
-                        style: Theme.of(context).textTheme.bodyText1.copyWith(
-                            fontSize: 16, fontWeight: FontWeight.w600),
-                        speed: 10,
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: MarqueeText(
+                          text: _controlsConfiguration.text,
+                          style: Theme.of(context).textTheme.bodyText1.copyWith(
+                              fontSize: 16, fontWeight: FontWeight.w600),
+                          speed: 10,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-            _controlsConfiguration.customTopBarWidget
-          ],
+              _controlsConfiguration.customTopBarWidget
+            ],
+          ),
         ),
       ),
     );
