@@ -462,7 +462,10 @@ class _BetterPlayerCupertinoControlsState
 
     return Expanded(
       child: GestureDetector(
-        onDoubleTap: () => _playPause(),
+        onDoubleTap: () => () {
+          cancelAndRestartTimer();
+          _playPause();
+        },
         onTap: () {
           if (_latestValue != null && _latestValue.isPlaying) {
             if (_displayTapped) {
