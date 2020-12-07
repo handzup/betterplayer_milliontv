@@ -10,13 +10,13 @@ class Constants {
   static const String hlsPlaylistUrl =
       "https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/master.m3u8";
   static const Map<String, String> exampleResolutionsUrls = {
-    "LOW":
+    "240":
         "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4",
-    "MEDIUM":
+    "360":
         "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_640_3MG.mp4",
-    "LARGE":
+    "720":
         "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1280_10MG.mp4",
-    "EXTRA_LARGE":
+    "1080":
         "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1920_18MG.mp4"
   };
   static const String phantomVideoUrl =

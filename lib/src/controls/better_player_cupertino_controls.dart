@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:marquee_text/marquee_text.dart';
 
 import 'better_player_clickable_widget.dart';
+import 'widgets/resolution_card.dart';
 
 class BetterPlayerCupertinoControls extends StatefulWidget {
   ///Callback used to send information if player bar is hidden or not
@@ -104,12 +105,29 @@ class _BetterPlayerCupertinoControlsState
                 children: <Widget>[
                   Container(
                     color: Colors.transparent,
-                    child: Column(
+                    child: Stack(
                       children: [
-                        _wasLoading
-                            ? Expanded(
-                                child: Center(child: _buildLoadingWidget()))
-                            : _buildHitArea(),
+                        Column(
+                          children: [
+                            _wasLoading
+                                ? Expanded(
+                                    child: Center(child: _buildLoadingWidget()))
+                                : SizedBox.shrink(),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  _buildHitBackwardArea(),
+                                  _buildHitArea(),
+                                  _buildHitForwardArea()
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -175,6 +193,83 @@ class _BetterPlayerCupertinoControlsState
       //     ),
       //   ],
       // ),
+    );
+  }
+
+  bool backwardAnimate = false;
+  bool forwardAnimate = false;
+  Expanded _buildHitForwardArea() {
+    var isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+    return Expanded(
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onDoubleTap: () {
+          print('tap');
+          setState(() {
+            _hideStuff = true;
+            forwardAnimate = true;
+          });
+          print(forwardAnimate);
+          skipForward();
+          Future.delayed(Duration(milliseconds: 500))
+              .then((value) => setState(() => forwardAnimate = false));
+        },
+        child: Container(
+          color: Colors.transparent,
+          child: Center(
+            child: AnimatedOpacity(
+                opacity: forwardAnimate ? 1.0 : 0.0,
+                duration: Duration(milliseconds: 300),
+                child: Container(
+                  width: isLandscape ? 200 : 100,
+                  height: isLandscape ? 200 : 100,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      color: Colors.white.withOpacity(.5)),
+                  child: Icon(CupertinoIcons.forward_fill,
+                      size: 30, color: Colors.white),
+                )),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Expanded _buildHitBackwardArea() {
+    var isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+    return Expanded(
+      child: GestureDetector(
+        onDoubleTap: () {
+          if (_displayTapped) {
+            setState(() {
+              _hideStuff = true;
+              backwardAnimate = true;
+            });
+            skipBack();
+            Future.delayed(Duration(milliseconds: 500))
+                .then((value) => setState(() => backwardAnimate = false));
+          } else
+            cancelAndRestartTimer();
+        },
+        child: Container(
+          child: Center(
+            child: AnimatedOpacity(
+                opacity: backwardAnimate ? 1.0 : 0.0,
+                duration: Duration(milliseconds: 300),
+                child: Container(
+                  width: isLandscape ? 200 : 100,
+                  height: isLandscape ? 200 : 100,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      color: Colors.white.withOpacity(.5)),
+                  child: Icon(CupertinoIcons.backward_fill,
+                      size: 30, color: Colors.white),
+                )),
+          ),
+        ),
+      ),
     );
   }
 
@@ -247,133 +342,118 @@ class _BetterPlayerCupertinoControlsState
       opacity: _hideStuff ? 0.0 : 1.0,
       duration: _controlsConfiguration.controlsHideTime,
       onEnd: _onPlayerHide,
-      child: _betterPlayerController.isLiveStream()
-          ? Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                const SizedBox(width: 8),
-                _controlsConfiguration.enablePlayPause
-                    ? _buildPlayPause(_controller, iconColor)
-                    : const SizedBox(),
-                const SizedBox(width: 8),
-                _buildLiveWidget(),
-              ],
-            )
-          : Column(
-              children: [
-                _betterPlayerController.isFullScreen
-                    ? Column(
+      child: Column(
+        children: [
+          _betterPlayerController.isFullScreen
+              ? Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildMoreButton(
+                          _controller,
+                        ),
+                        GestureDetector(
+                            onTap: () => _onExpandCollapse(),
+                            child: Transform(
+                                alignment: Alignment.center,
+                                transform: Matrix4.rotationY(
+                                    _betterPlayerController.isFullScreen
+                                        ? 0
+                                        : pi),
+                                child: _controlsConfiguration.rotateWidget))
+                      ],
+                    ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(right: 12, left: 12, top: 12),
+                      child: Column(
                         children: [
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              _buildMoreButton(
-                                _controller,
-                              ),
-                              GestureDetector(
-                                  onTap: () => _onExpandCollapse(),
-                                  child: Transform(
-                                      alignment: Alignment.center,
-                                      transform: Matrix4.rotationY(
-                                          _betterPlayerController.isFullScreen
-                                              ? 0
-                                              : pi),
-                                      child:
-                                          _controlsConfiguration.rotateWidget))
+                            children: <Widget>[
+                              _controlsConfiguration.enableProgressBar
+                                  ? Expanded(
+                                      child: Row(
+                                        children: [
+                                          _buildPositionOnly(),
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          _buildProgressBar(),
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          _buildDurationOnly()
+                                        ],
+                                      ),
+                                    )
+                                  : const SizedBox.shrink(),
                             ],
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                right: 12, left: 12, top: 12),
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: <Widget>[
-                                    _controlsConfiguration.enableProgressBar
-                                        ? Expanded(
-                                            child: Row(
-                                              children: [
-                                                _buildPositionOnly(),
-                                                SizedBox(
-                                                  width: 5,
-                                                ),
-                                                _buildProgressBar(),
-                                                SizedBox(
-                                                  width: 5,
-                                                ),
-                                                _buildDurationOnly()
-                                              ],
-                                            ),
-                                          )
-                                        : const SizedBox.shrink(),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      )
-                    : Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              _buildMoreButton(
-                                _controller,
-                              ),
-                              GestureDetector(
-                                  onTap: () => _onExpandCollapse(),
-                                  child: Transform(
-                                      alignment: Alignment.center,
-                                      transform: Matrix4.rotationY(
-                                          _betterPlayerController.isFullScreen
-                                              ? 0
-                                              : pi),
-                                      child:
-                                          _controlsConfiguration.rotateWidget))
-                            ],
-                          ),
-                          BluredCard(
-                            borderRadius: 8,
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  right: 12, left: 12, top: 12),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: <Widget>[
-                                      _controlsConfiguration.enableProgressBar
-                                          ? _buildProgressBar()
-                                          : const SizedBox.shrink(),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      _buildPositionOnly(),
-                                      _buildDurationOnly()
-                                    ],
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      _buildSkipBack(),
-                                      playPause(),
-                                      _buildSkipForward()
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
                           ),
                         ],
                       ),
-              ],
-            ),
+                    ),
+                  ],
+                )
+              : Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildMoreButton(
+                          _controller,
+                        ),
+                        GestureDetector(
+                            onTap: () => _onExpandCollapse(),
+                            child: Transform(
+                                alignment: Alignment.center,
+                                transform: Matrix4.rotationY(
+                                    _betterPlayerController.isFullScreen
+                                        ? 0
+                                        : pi),
+                                child: _controlsConfiguration.rotateWidget))
+                      ],
+                    ),
+                    BluredCard(
+                      borderRadius: 8,
+                      child: Padding(
+                        padding:
+                            const EdgeInsets.only(right: 12, left: 12, top: 12),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: <Widget>[
+                                _controlsConfiguration.enableProgressBar
+                                    ? _buildProgressBar()
+                                    : const SizedBox.shrink(),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                _buildPositionOnly(),
+                                _buildDurationOnly()
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                _buildSkipBack(),
+                                playPause(),
+                                _buildSkipForward()
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+        ],
+      ),
     );
   }
 
@@ -458,20 +538,25 @@ class _BetterPlayerCupertinoControlsState
   Expanded _buildHitArea() {
     bool isFinished = _latestValue == null
         ? false
-        : _latestValue.position >= _latestValue?.duration;
+        : _latestValue.position >=
+            (_latestValue.duration != null
+                ? _latestValue.duration
+                : Duration(seconds: 1));
 
     return Expanded(
       child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onDoubleTap: () => () {
           cancelAndRestartTimer();
           _playPause();
         },
         onTap: () {
-          if (_latestValue != null && _latestValue.isPlaying) {
+          if (_betterPlayerController.videoPlayerController.value.isPlaying) {
             if (_displayTapped) {
               setState(() {
                 _hideStuff = true;
               });
+              _playPause();
             } else
               cancelAndRestartTimer();
           } else {
@@ -529,7 +614,8 @@ class _BetterPlayerCupertinoControlsState
   Widget playPause() {
     bool isFinished = _latestValue == null
         ? false
-        : _latestValue.position >= (_latestValue.duration ?? Duration.zero);
+        : _latestValue.position >=
+            (_latestValue.duration ?? Duration(seconds: 1));
 
     return GestureDetector(
       onTap: () {
@@ -578,7 +664,8 @@ class _BetterPlayerCupertinoControlsState
   void _playPause() {
     bool isFinished = _latestValue == null
         ? false
-        : _latestValue.position >= _latestValue.duration;
+        : _latestValue.position >=
+            (_latestValue.duration ?? Duration(seconds: 1));
 
     setState(() {
       if (_betterPlayerController.videoPlayerController.value.isPlaying) {
@@ -663,6 +750,7 @@ class _BetterPlayerCupertinoControlsState
   }
 
   BetterPlayerHlsTrack selectedTrack;
+  Resolution selectedResolution;
   bool _showMenu = false;
   void drDownTap() {
     setState(() => _showMenu = true);
@@ -691,20 +779,20 @@ class _BetterPlayerCupertinoControlsState
         betterPlayerController.betterPlayerDataSource.hlsTrackNames ?? List();
     List<BetterPlayerHlsTrack> tracks =
         betterPlayerController.betterPlayerTracks;
-    var children = List<Widget>();
-    for (var index = 0; index < tracks.length; index++) {
-      var preferredName = trackNames.length > index ? trackNames[index] : null;
-      children.add(_buildTrackRow(tracks[index], preferredName));
-    }
+    var children = List<Resolution>();
+    // for (var index = 0; index < tracks.length; index++) {
+    //   var preferredName = trackNames.length > index ? trackNames[index] : null;
+    //   children.add(_buildTrackRow(tracks[index], preferredName));
+    // }
     var resolutions = betterPlayerController.betterPlayerDataSource.resolutions;
     resolutions?.forEach((key, value) {
-      children.add(_buildResolutionSelectionRow(key, value));
+      children.add(Resolution(name: key, url: value));
     });
 
-    if (children.isEmpty) {
-      children.add(_buildTrackRow(BetterPlayerHlsTrack(0, 0, 0),
-          betterPlayerController.translations.generalDefault));
-    }
+    // if (children.isEmpty) {
+    //   children.add(_buildTrackRow(BetterPlayerHlsTrack(0, 0, 0),
+    //       betterPlayerController.translations.generalDefault));
+    // }
 
     return GestureDetector(
       onTap: () {
@@ -721,17 +809,29 @@ class _BetterPlayerCupertinoControlsState
               childAnchor: Alignment.topCenter,
               menuAnchor: Alignment.bottomCenter,
               menu: Menu(
-                  children: List.generate(
-                tracks.length,
-                (index) => ItemCard(
-                  track: tracks[index],
-                  onTap: (track) => {
-                    betterPlayerController.setTrack(track),
-                    setState(() => selectedTrack = track)
-                  },
-                  isSelected: tracks[index] == selectedTrack,
-                ),
-              )),
+                  children: children.isEmpty
+                      ? List.generate(
+                          tracks.length,
+                          (index) => ItemCard(
+                                track: tracks[index],
+                                onTap: (track) => {
+                                  betterPlayerController.setTrack(track),
+                                  setState(() => selectedTrack = track)
+                                },
+                                isSelected: tracks[index] == selectedTrack,
+                              ))
+                      : List.generate(
+                          children.length,
+                          (index) => ResolutionCard(
+                            track: children[index],
+                            onTap: (track) => {
+                              betterPlayerController.setResolution(track.url),
+                              setState(() => selectedResolution = track)
+                            },
+                            isSelected: children[index].name ==
+                                selectedResolution?.name,
+                          ),
+                        )),
               child: GestureDetector(
                 onTap: () => drDownTap(),
                 child: Container(
@@ -940,7 +1040,9 @@ class _BetterPlayerCupertinoControlsState
                   ),
                 ),
               ),
-              _controlsConfiguration.customTopBarWidget
+              _betterPlayerController.isLiveStream()
+                  ? _controlsConfiguration.customTopBarWidget
+                  : SizedBox.shrink()
             ],
           ),
         ),

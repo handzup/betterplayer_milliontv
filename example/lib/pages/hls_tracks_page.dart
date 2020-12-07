@@ -26,7 +26,7 @@ class _HlsTracksPageState extends State<HlsTracksPage> {
           ),
           textStyle: TextStyle(
               color: Colors.white, fontFamily: 'Avenir', fontSize: 15),
-              text: 'Text sadasd some long long long long long long text',
+          text: 'Text sadasd some long long long long long long text',
           customTopBarWidget: Text(
             'tetxt',
             style: TextStyle(fontSize: 16, color: Colors.white),
@@ -35,9 +35,15 @@ class _HlsTracksPageState extends State<HlsTracksPage> {
       fit: BoxFit.contain,
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.NETWORK,
-        'https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/master.m3u8',
-        useHlsSubtitles: true);
+      BetterPlayerDataSourceType.NETWORK,
+
+      // Constants.exampleResolutionsUrls.values.first,
+      // resolutions: Constants.exampleResolutionsUrls,
+      //'http://sample.vodobox.com/skate_phantom_flex_4k/skate_phantom_flex_4k.m3u8',
+      'https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/master.m3u8',
+      liveStream: true,
+      //  useHlsSubtitles: true
+    );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     super.initState();
