@@ -26,6 +26,7 @@ class _HlsTracksPageState extends State<HlsTracksPage> {
           ),
           textStyle: TextStyle(
               color: Colors.white, fontFamily: 'Avenir', fontSize: 15),
+              text: 'Text sadasd some long long long long long long text',
           customTopBarWidget: Text(
             'tetxt',
             style: TextStyle(fontSize: 16, color: Colors.white),

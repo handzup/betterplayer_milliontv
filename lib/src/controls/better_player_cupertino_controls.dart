@@ -16,6 +16,7 @@ import 'package:better_player/src/hls/better_player_hls_track.dart';
 import 'package:better_player/src/video_player/video_player.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:marquee_text/marquee_text.dart';
 
 import 'better_player_clickable_widget.dart';
 
@@ -94,39 +95,86 @@ class _BetterPlayerCupertinoControlsState
         cancelAndRestartTimer();
       },
       child: GestureDetector(
-        onTap: cancelAndRestartTimer,
-        onDoubleTap: () {
-          cancelAndRestartTimer();
-          _onPlayPause();
-        },
+        onTap: () => cancelAndRestartTimer(),
         child: AbsorbPointer(
           absorbing: _hideStuff,
           child: Stack(
             children: <Widget>[
-              _buildTopBar(
-                  backgroundColor, iconColor, barHeight, buttonPadding),
-              Column(
-                children: [
-                  _wasLoading
-                      ? Expanded(child: Center(child: _buildLoadingWidget()))
-                      : _buildHitArea(),
+              Stack(
+                children: <Widget>[
+                  Container(
+                    color: Colors.transparent,
+                    child: Column(
+                      children: [
+                        _wasLoading
+                            ? Expanded(
+                                child: Center(child: _buildLoadingWidget()))
+                            : _buildHitArea(),
+                      ],
+                    ),
+                  ),
+                  _buildNextVideoWidget(),
+                  Positioned(
+                      left: 16,
+                      right: 16,
+                      bottom: _betterPlayerController.isFullScreen ? 30 : 40,
+                      child: Container(
+                        child: SizedBox(
+                            height:
+                                betterPlayerController.isFullScreen ? 80 : 145,
+                            child: _buildBottomBar(
+                              backgroundColor,
+                              iconColor,
+                            )),
+                      )),
                 ],
               ),
-              _buildNextVideoWidget(),
-              Positioned(
-                  left: 16,
-                  right: 16,
-                  bottom: _betterPlayerController.isFullScreen ? 30 : 40,
-                  child: SizedBox(
-                      height: betterPlayerController.isFullScreen ? 80 : 145,
-                      child: _buildBottomBar(
-                        backgroundColor,
-                        iconColor,
-                      ))),
+              _buildTopBar(
+                  backgroundColor, iconColor, barHeight, buttonPadding),
             ],
           ),
         ),
       ),
+
+      // Stack(
+      //   children: [
+      //     _buildTopBar(backgroundColor, iconColor, barHeight, buttonPadding),
+      //     GestureDetector(
+      //       onTap: cancelAndRestartTimer,
+      //       onDoubleTap: () {
+      //         cancelAndRestartTimer();
+      //         _playPause();
+      //       },
+      //       child: AbsorbPointer(
+      //         absorbing: _hideStuff,
+      //         child: Stack(
+      //           children: <Widget>[
+      //             Column(
+      //               children: [
+      //                 _wasLoading
+      //                     ? Expanded(
+      //                         child: Center(child: _buildLoadingWidget()))
+      //                     : _buildHitArea(),
+      //               ],
+      //             ),
+      //             _buildNextVideoWidget(),
+      //             Positioned(
+      //                 left: 16,
+      //                 right: 16,
+      //                 bottom: _betterPlayerController.isFullScreen ? 30 : 40,
+      //                 child: SizedBox(
+      //                     height:
+      //                         betterPlayerController.isFullScreen ? 80 : 145,
+      //                     child: _buildBottomBar(
+      //                       backgroundColor,
+      //                       iconColor,
+      //                     ))),
+      //           ],
+      //         ),
+      //       ),
+      //     ),
+      //   ],
+      // ),
     );
   }
 
@@ -187,7 +235,6 @@ class _BetterPlayerCupertinoControlsState
         duration: Duration(milliseconds: 400),
         reverseDuration: Duration(milliseconds: 400),
       );
-      playPauseIconAnimationController.forward();
     }
     super.didChangeDependencies();
   }
@@ -415,6 +462,7 @@ class _BetterPlayerCupertinoControlsState
 
     return Expanded(
       child: GestureDetector(
+        onDoubleTap: () => _playPause(),
         onTap: () {
           if (_latestValue != null && _latestValue.isPlaying) {
             if (_displayTapped) {
@@ -855,12 +903,41 @@ class _BetterPlayerCupertinoControlsState
         height: barHeight,
         margin: EdgeInsets.only(
           top: marginSize,
-          right: marginSize,
-          left: marginSize,
+          right: 16,
+          left: 16,
         ),
         child: Row(
-          children: <Widget>[
-            _controlsConfiguration.customTopBarWidget,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () => Navigator.of(context).pop(),
+              child: Container(
+                child: Icon(
+                  Icons.arrow_back,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: MarqueeText(
+                        text: _controlsConfiguration.text,
+                        style: Theme.of(context).textTheme.bodyText1.copyWith(
+                            fontSize: 16, fontWeight: FontWeight.w600),
+                        speed: 10,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            _controlsConfiguration.customTopBarWidget
           ],
         ),
       ),

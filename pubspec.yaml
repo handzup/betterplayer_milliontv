@@ -21,7 +21,7 @@ dependencies:
   visibility_detector: ^0.1.5
   path_provider: ^1.6.24
   flutter_portal: ^0.3.0
-
+  marquee_text: ^1.1.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

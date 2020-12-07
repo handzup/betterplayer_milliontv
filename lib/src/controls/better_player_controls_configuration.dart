@@ -12,6 +12,7 @@ class BetterPlayerControlsConfiguration {
   final Color textColor;
   final Widget customTopBarWidget;
   final Widget rotateWidget;
+  final String text;
 
   ///Color of icons
   final Color iconsColor;
@@ -125,6 +126,7 @@ class BetterPlayerControlsConfiguration {
   final TextStyle textStyle;
   const BetterPlayerControlsConfiguration(
       {this.controlBarColor = Colors.black87,
+      this.text,
       this.textStyle,
       this.rotateWidget,
       this.qualityIcon,
