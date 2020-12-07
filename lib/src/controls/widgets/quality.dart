@@ -23,7 +23,7 @@ class ItemCard extends StatelessWidget {
             ? BoxDecoration()
             : BoxDecoration(
                 borderRadius: BorderRadius.circular(24),
-                color: AppTheme.backgroundColor),
+                color: AppTheme.cardBottomColor),
         child: Padding(
           padding: const EdgeInsets.all(3.0),
           child: Row(
