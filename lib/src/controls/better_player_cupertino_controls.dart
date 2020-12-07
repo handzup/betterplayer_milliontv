@@ -992,6 +992,13 @@ class _BetterPlayerCupertinoControlsState
     );
   }
 
+  void back() {
+    if (!betterPlayerController.isFullScreen) {
+      _controlsConfiguration.exitCallBack();
+    }
+    Navigator.of(context).pop();
+  }
+
   AnimatedOpacity _buildTopBar(
     Color backgroundColor,
     Color iconColor,
@@ -1014,7 +1021,7 @@ class _BetterPlayerCupertinoControlsState
             children: [
               GestureDetector(
                 behavior: HitTestBehavior.opaque,
-                onTap: () => Navigator.of(context).pop(),
+                onTap: () => back(),
                 child: Container(
                   child: Icon(
                     Icons.arrow_back,

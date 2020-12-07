@@ -13,6 +13,7 @@ class BetterPlayerControlsConfiguration {
   final Widget customTopBarWidget;
   final Widget rotateWidget;
   final String text;
+  final VoidCallback exitCallBack;
 
   ///Color of icons
   final Color iconsColor;
@@ -127,6 +128,7 @@ class BetterPlayerControlsConfiguration {
   const BetterPlayerControlsConfiguration(
       {this.controlBarColor = Colors.black87,
       this.text,
+      this.exitCallBack,
       this.textStyle,
       this.rotateWidget,
       this.qualityIcon,

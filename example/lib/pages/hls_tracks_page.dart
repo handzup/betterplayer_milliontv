@@ -16,6 +16,7 @@ class _HlsTracksPageState extends State<HlsTracksPage> {
     BetterPlayerConfiguration betterPlayerConfiguration =
         BetterPlayerConfiguration(
       controlsConfiguration: BetterPlayerControlsConfiguration(
+          exitCallBack: exit,
           rotateWidget: SvgPicture.asset(
             'assets/rotate_video.svg',
           ),
@@ -47,6 +48,11 @@ class _HlsTracksPageState extends State<HlsTracksPage> {
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     super.initState();
+  }
+
+  void exit() {
+    print(
+        _betterPlayerController.videoPlayerController.value.position.inSeconds);
   }
 
   @override
