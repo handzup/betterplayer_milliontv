@@ -12,8 +12,12 @@ class BetterPlayerControlsConfiguration {
   final Color textColor;
   final Widget customTopBarWidget;
   final Widget rotateWidget;
+  final Widget fullScreenWidget;
+  final Widget exitFullScreenWidget;
   final String text;
   final VoidCallback exitCallBack;
+  final Widget skipIcon;
+  final Widget skipAheadIcon;
 
   ///Color of icons
   final Color iconsColor;
@@ -127,6 +131,10 @@ class BetterPlayerControlsConfiguration {
   final TextStyle textStyle;
   const BetterPlayerControlsConfiguration(
       {this.controlBarColor = Colors.black87,
+      this.skipIcon,
+      this.skipAheadIcon,
+      this.fullScreenWidget,
+      this.exitFullScreenWidget,
       this.text,
       this.exitCallBack,
       this.textStyle,

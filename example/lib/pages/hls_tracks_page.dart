@@ -18,8 +18,17 @@ class _HlsTracksPageState extends State<HlsTracksPage> {
       autoPlay: true,
       controlsConfiguration: BetterPlayerControlsConfiguration(
           exitCallBack: exit,
-          rotateWidget: SvgPicture.asset(
-            'assets/rotate_video.svg',
+          skipAheadIcon: SvgPicture.asset(
+            'assets/skip_15_seconds_back.svg',
+          ),
+          skipIcon: SvgPicture.asset(
+            'assets/skip_ahead_15_seconds.svg',
+          ),
+          fullScreenWidget: SvgPicture.asset(
+            'assets/full_screen.svg',
+          ),
+          exitFullScreenWidget: SvgPicture.asset(
+            'assets/exit_full_screen.svg',
           ),
           qualityIcon: SvgPicture.asset(
             'assets/video_quality.svg',

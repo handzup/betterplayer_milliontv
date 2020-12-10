@@ -278,11 +278,7 @@ class _BetterPlayerCupertinoControlsState
       onTap: skipBack,
       child: Container(
         color: Colors.transparent,
-        child: Icon(
-          CupertinoIcons.gobackward_15,
-          color: Colors.white,
-          size: 18.0,
-        ),
+        child: _controlsConfiguration.skipAheadIcon,
       ),
     );
   }
@@ -291,11 +287,7 @@ class _BetterPlayerCupertinoControlsState
     return GestureDetector(
       onTap: skipForward,
       child: Container(
-        child: Icon(
-          CupertinoIcons.goforward_15,
-          color: Colors.white,
-          size: 18.0,
-        ),
+        child: _controlsConfiguration.skipIcon,
       ),
     );
   }
@@ -362,13 +354,7 @@ class _BetterPlayerCupertinoControlsState
                         ),
                         GestureDetector(
                             onTap: () => _onExpandCollapse(),
-                            child: Transform(
-                                alignment: Alignment.center,
-                                transform: Matrix4.rotationY(
-                                    _betterPlayerController.isFullScreen
-                                        ? 0
-                                        : pi),
-                                child: _controlsConfiguration.rotateWidget))
+                            child: _controlsConfiguration.exitFullScreenWidget)
                       ],
                     ),
                     Padding(
@@ -412,13 +398,7 @@ class _BetterPlayerCupertinoControlsState
                         ),
                         GestureDetector(
                             onTap: () => _onExpandCollapse(),
-                            child: Transform(
-                                alignment: Alignment.center,
-                                transform: Matrix4.rotationY(
-                                    _betterPlayerController.isFullScreen
-                                        ? 0
-                                        : pi),
-                                child: _controlsConfiguration.rotateWidget))
+                            child: _controlsConfiguration.fullScreenWidget)
                       ],
                     ),
                     BluredCard(
