@@ -135,11 +135,16 @@ class _BetterPlayerCupertinoControlsState
                   Positioned(
                       left: 16,
                       right: 16,
-                      bottom: _betterPlayerController.isFullScreen ? 30 : 40,
+                      bottom: MediaQuery.of(context).orientation ==
+                              Orientation.landscape
+                          ? 30
+                          : 40,
                       child: Container(
                         child: SizedBox(
-                            height:
-                                betterPlayerController.isFullScreen ? 80 : 145,
+                            height: MediaQuery.of(context).orientation ==
+                                    Orientation.landscape
+                                ? 80
+                                : 145,
                             child: _buildBottomBar(
                               backgroundColor,
                               iconColor,
@@ -343,7 +348,7 @@ class _BetterPlayerCupertinoControlsState
       onEnd: _onPlayerHide,
       child: Column(
         children: [
-          _betterPlayerController.isFullScreen
+          MediaQuery.of(context).orientation == Orientation.landscape
               ? Column(
                   children: [
                     Row(
