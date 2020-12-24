@@ -91,113 +91,125 @@ class _BetterPlayerCupertinoControlsState
         : _controlsConfiguration.controlBarHeight + 17;
     final buttonPadding = orientation == Orientation.portrait ? 16.0 : 24.0;
     _wasLoading = isLoading(_latestValue);
-    return MouseRegion(
-      onHover: (_) {
-        cancelAndRestartTimer();
+    return WillPopScope(
+      onWillPop: () async {
+        if (_betterPlayerController.isFullScreen) {
+          _betterPlayerController.exitFullScreen();
+          return false;
+        } else {
+          _controlsConfiguration.exitCallBack();
+          return true;
+        }
       },
-      child: GestureDetector(
-        onTap: () => cancelAndRestartTimer(),
-        child: AbsorbPointer(
-          absorbing: _hideStuff,
-          child: Stack(
-            children: <Widget>[
-              Stack(
-                children: <Widget>[
-                  Container(
-                    color: Colors.transparent,
-                    child: Stack(
-                      children: [
-                        Column(
-                          children: [
-                            _wasLoading
-                                ? Expanded(
-                                    child: Center(child: _buildLoadingWidget()))
-                                : SizedBox.shrink(),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  _buildHitBackwardArea(),
-                                  _buildHitArea(),
-                                  _buildHitForwardArea()
-                                ],
+      child: MouseRegion(
+        onHover: (_) {
+          cancelAndRestartTimer();
+        },
+        child: GestureDetector(
+          onTap: () => cancelAndRestartTimer(),
+          child: AbsorbPointer(
+            absorbing: _hideStuff,
+            child: Stack(
+              children: <Widget>[
+                Stack(
+                  children: <Widget>[
+                    Container(
+                      color: Colors.transparent,
+                      child: Stack(
+                        children: [
+                          Column(
+                            children: [
+                              _wasLoading
+                                  ? Expanded(
+                                      child:
+                                          Center(child: _buildLoadingWidget()))
+                                  : SizedBox.shrink(),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    _buildHitBackwardArea(),
+                                    _buildHitArea(),
+                                    _buildHitForwardArea()
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  _buildNextVideoWidget(),
-                  Positioned(
-                      left: 16,
-                      right: 16,
-                      bottom: MediaQuery.of(context).orientation ==
-                              Orientation.landscape
-                          ? 0
-                          : 10,
-                      child: Container(
-                        child: SizedBox(
-                            height: MediaQuery.of(context).orientation ==
-                                    Orientation.landscape
-                                ? 80
-                                : 145,
-                            child: _buildBottomBar(
-                              backgroundColor,
-                              iconColor,
-                            )),
-                      )),
-                ],
-              ),
-              _buildTopBar(
-                  backgroundColor, iconColor, barHeight, buttonPadding),
-            ],
+                    _buildNextVideoWidget(),
+                    Positioned(
+                        left: 16,
+                        right: 16,
+                        bottom: MediaQuery.of(context).orientation ==
+                                Orientation.landscape
+                            ? 0
+                            : 10,
+                        child: Container(
+                          child: SizedBox(
+                              height: MediaQuery.of(context).orientation ==
+                                      Orientation.landscape
+                                  ? 80
+                                  : 145,
+                              child: _buildBottomBar(
+                                backgroundColor,
+                                iconColor,
+                              )),
+                        )),
+                  ],
+                ),
+                _buildTopBar(
+                    backgroundColor, iconColor, barHeight, buttonPadding),
+              ],
+            ),
           ),
         ),
-      ),
 
-      // Stack(
-      //   children: [
-      //     _buildTopBar(backgroundColor, iconColor, barHeight, buttonPadding),
-      //     GestureDetector(
-      //       onTap: cancelAndRestartTimer,
-      //       onDoubleTap: () {
-      //         cancelAndRestartTimer();
-      //         _playPause();
-      //       },
-      //       child: AbsorbPointer(
-      //         absorbing: _hideStuff,
-      //         child: Stack(
-      //           children: <Widget>[
-      //             Column(
-      //               children: [
-      //                 _wasLoading
-      //                     ? Expanded(
-      //                         child: Center(child: _buildLoadingWidget()))
-      //                     : _buildHitArea(),
-      //               ],
-      //             ),
-      //             _buildNextVideoWidget(),
-      //             Positioned(
-      //                 left: 16,
-      //                 right: 16,
-      //                 bottom: _betterPlayerController.isFullScreen ? 30 : 40,
-      //                 child: SizedBox(
-      //                     height:
-      //                         betterPlayerController.isFullScreen ? 80 : 145,
-      //                     child: _buildBottomBar(
-      //                       backgroundColor,
-      //                       iconColor,
-      //                     ))),
-      //           ],
-      //         ),
-      //       ),
-      //     ),
-      //   ],
-      // ),
+        // Stack(
+        //   children: [
+        //     _buildTopBar(backgroundColor, iconColor, barHeight, buttonPadding),
+        //     GestureDetector(
+        //       onTap: cancelAndRestartTimer,
+        //       onDoubleTap: () {
+        //         cancelAndRestartTimer();
+        //         _playPause();
+        //       },
+        //       child: AbsorbPointer(
+        //         absorbing: _hideStuff,
+        //         child: Stack(
+        //           children: <Widget>[
+        //             Column(
+        //               children: [
+        //                 _wasLoading
+        //                     ? Expanded(
+        //                         child: Center(child: _buildLoadingWidget()))
+        //                     : _buildHitArea(),
+        //               ],
+        //             ),
+        //             _buildNextVideoWidget(),
+        //             Positioned(
+        //                 left: 16,
+        //                 right: 16,
+        //                 bottom: _betterPlayerController.isFullScreen ? 30 : 40,
+        //                 child: SizedBox(
+        //                     height:
+        //                         betterPlayerController.isFullScreen ? 80 : 145,
+        //                     child: _buildBottomBar(
+        //                       backgroundColor,
+        //                       iconColor,
+        //                     ))),
+        //           ],
+        //         ),
+        //       ),
+        //     ),
+        //   ],
+        // ),
+      ),
     );
   }
 
