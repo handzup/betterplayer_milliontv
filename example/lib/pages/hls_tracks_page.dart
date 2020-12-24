@@ -50,8 +50,8 @@ class _HlsTracksPageState extends State<HlsTracksPage> {
 
       // Constants.exampleResolutionsUrls.values.first,
       // resolutions: Constants.exampleResolutionsUrls,
-      //'http://sample.vodobox.com/skate_phantom_flex_4k/skate_phantom_flex_4k.m3u8',
-      '',
+      'http://sample.vodobox.com/skate_phantom_flex_4k/skate_phantom_flex_4k.m3u8',
+
       liveStream: true,
       //  useHlsSubtitles: true
     );

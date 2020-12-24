@@ -137,8 +137,8 @@ class _BetterPlayerCupertinoControlsState
                       right: 16,
                       bottom: MediaQuery.of(context).orientation ==
                               Orientation.landscape
-                          ? 30
-                          : 40,
+                          ? 0
+                          : 10,
                       child: Container(
                         child: SizedBox(
                             height: MediaQuery.of(context).orientation ==
@@ -689,64 +689,64 @@ class _BetterPlayerCupertinoControlsState
     });
   }
 
-  Widget _buildResolutionSelectionRow(String name, String url) {
-    bool isSelected = url == betterPlayerController.betterPlayerDataSource.url;
-    return BetterPlayerMaterialClickableWidget(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-        child: Row(
-          children: [
-            const SizedBox(width: 16),
-            Text(
-              "$name",
-              style: TextStyle(
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
-            ),
-          ],
-        ),
-      ),
-      onTap: () {
-        Navigator.of(context).pop();
-        betterPlayerController.setResolution(url);
-      },
-    );
-  }
+  // Widget _buildResolutionSelectionRow(String name, String url) {
+  //   bool isSelected = url == betterPlayerController.betterPlayerDataSource.url;
+  //   return BetterPlayerMaterialClickableWidget(
+  //     child: Padding(
+  //       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+  //       child: Row(
+  //         children: [
+  //           const SizedBox(width: 16),
+  //           Text(
+  //             "$name",
+  //             style: TextStyle(
+  //               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //     onTap: () {
+  //       Navigator.of(context).pop();
+  //       betterPlayerController.setResolution(url);
+  //     },
+  //   );
+  // }
 
-  Widget _buildTrackRow(BetterPlayerHlsTrack track, String preferredName) {
-    assert(track != null, "Track can't be null");
+  // Widget _buildTrackRow(BetterPlayerHlsTrack track, String preferredName) {
+  //   assert(track != null, "Track can't be null");
 
-    String trackName = preferredName ??
-        track.width.toString() +
-            "x" +
-            track.height.toString() +
-            " " +
-            BetterPlayerUtils.formatBitrate(track.bitrate);
+  //   String trackName = preferredName ??
+  //       track.width.toString() +
+  //           "x" +
+  //           track.height.toString() +
+  //           " " +
+  //           BetterPlayerUtils.formatBitrate(track.bitrate);
 
-    var selectedTrack = betterPlayerController.betterPlayerTrack;
-    bool isSelected = selectedTrack != null && selectedTrack == track;
+  //   var selectedTrack = betterPlayerController.betterPlayerTrack;
+  //   bool isSelected = selectedTrack != null && selectedTrack == track;
 
-    return BetterPlayerMaterialClickableWidget(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-        child: Row(
-          children: [
-            const SizedBox(width: 16),
-            Text(
-              "$trackName",
-              style: TextStyle(
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
-            ),
-          ],
-        ),
-      ),
-      onTap: () {
-        Navigator.of(context).pop();
-        betterPlayerController.setTrack(track);
-      },
-    );
-  }
+  //   return BetterPlayerMaterialClickableWidget(
+  //     child: Padding(
+  //       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+  //       child: Row(
+  //         children: [
+  //           const SizedBox(width: 16),
+  //           Text(
+  //             "$trackName",
+  //             style: TextStyle(
+  //               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //     onTap: () {
+  //       Navigator.of(context).pop();
+  //       betterPlayerController.setTrack(track);
+  //     },
+  //   );
+  // }
 
   BetterPlayerHlsTrack selectedTrack;
   Resolution selectedResolution;
@@ -755,30 +755,14 @@ class _BetterPlayerCupertinoControlsState
     setState(() => _showMenu = true);
   }
 
-  builQuality() {
-    List<String> trackNames =
-        betterPlayerController.betterPlayerDataSource.hlsTrackNames ?? List();
-    List<BetterPlayerHlsTrack> tracks =
-        betterPlayerController.betterPlayerTracks;
-    var children = List<Widget>();
-    for (var index = 0; index < tracks.length; index++) {
-      var preferredName = trackNames.length > index ? trackNames[index] : null;
-      children.add(_buildTrackRow(tracks[index], preferredName));
-    }
-    var resolutions = betterPlayerController.betterPlayerDataSource.resolutions;
-    resolutions?.forEach((key, value) {
-      children.add(_buildResolutionSelectionRow(key, value));
-    });
-  }
-
-  GestureDetector _buildMoreButton(
+  AnimatedOpacity _buildMoreButton(
     VideoPlayerController controller,
   ) {
     List<String> trackNames =
         betterPlayerController.betterPlayerDataSource.hlsTrackNames ?? List();
     List<BetterPlayerHlsTrack> tracks =
         betterPlayerController.betterPlayerTracks;
-
+    selectedTrack = betterPlayerController.betterPlayerTrack;
     var children = List<Resolution>();
     // for (var index = 0; index < tracks.length; index++) {
     //   var preferredName = trackNames.length > index ? trackNames[index] : null;
@@ -794,139 +778,146 @@ class _BetterPlayerCupertinoControlsState
     //       betterPlayerController.translations.generalDefault));
     // }
 
-    return GestureDetector(
-      onTap: () {
-        onShowMoreClicked();
-      },
-      child: AnimatedOpacity(
-        opacity: _hideStuff ? 0.0 : 1.0,
-        duration: _controlsConfiguration.controlsHideTime,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(10.0),
-          child: ModalEntry(
-              visible: _showMenu,
-              onClose: () => setState(() => _showMenu = false),
-              childAnchor: Alignment.topCenter,
-              menuAnchor: Alignment.bottomCenter,
-              menu: Menu(
-                  children: children.isEmpty
-                      ? List.generate(
-                          tracks.length,
-                          (index) => ItemCard(
-                                track: tracks[index],
-                                onTap: (track) => {
-                                  betterPlayerController.setTrack(track),
-                                  setState(() => selectedTrack = track)
-                                },
-                                isSelected: tracks[index] == selectedTrack,
-                              ))
-                      : List.generate(
-                          children.length,
-                          (index) => ResolutionCard(
-                            track: children[index],
-                            onTap: (track) => {
-                              betterPlayerController.setResolution(track.url),
-                              setState(() => selectedResolution = track)
-                            },
-                            isSelected: children[index].name ==
-                                selectedResolution?.name,
-                          ),
-                        )),
-              child: GestureDetector(
-                onTap: () => drDownTap(),
+    return AnimatedOpacity(
+      opacity: _hideStuff ? 0.0 : 1.0,
+      duration: _controlsConfiguration.controlsHideTime,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10.0),
+        child: ModalEntry(
+            visible: _showMenu,
+            onClose: () => setState(() => _showMenu = false),
+            childAnchor: Alignment.topCenter,
+            menuAnchor: Alignment.bottomCenter,
+            menu: Menu(
+                children: children.isEmpty
+                    ? ListView.builder(
+                        shrinkWrap: true,
+                        reverse: true,
+                        physics: BouncingScrollPhysics(),
+                        itemCount: tracks.length,
+                        itemBuilder: (_, index) => ItemCard(
+                              track: tracks[index],
+                              onTap: (track) => {
+                                betterPlayerController.setTrack(track),
+                                setState(() => selectedTrack = track)
+                              },
+                              isSelected: tracks[index] == selectedTrack,
+                            ))
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        reverse: true,
+                        physics: BouncingScrollPhysics(),
+                        itemCount: children.length,
+                        itemBuilder: (_, index) => ResolutionCard(
+                          track: children[index],
+                          onTap: (track) => {
+                            betterPlayerController.setResolution(track.url),
+                            setState(() => selectedResolution = track)
+                          },
+                          isSelected:
+                              children[index].name == selectedResolution?.name,
+                        ),
+                      )),
+            //       List.generate(
+            //   children.length,
+            //   (index) => ResolutionCard(
+            //     track: children[index],
+            //     onTap: (track) => {
+            //       betterPlayerController.setResolution(track.url),
+            //       setState(() => selectedResolution = track)
+            //     },
+            //     isSelected:
+            //         children[index].name == selectedResolution?.name,
+            //   ),
+            // )),
+            child: GestureDetector(
+              onTap: () => drDownTap(),
+              child: Container(
+                width: 80,
+                height: 30,
                 child: Container(
-                  width: 80,
-                  height: 30,
-                  child: Container(
-                    color: Colors.transparent,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 0, bottom: 10),
-                      child: Stack(
-                        alignment: Alignment.bottomCenter,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [_controlsConfiguration.qualityIcon],
-                            // SvgPicture.asset(
-                            //     'assets/video_quality.svg',
-                            //     height: 30,
-                            //     width: 30,
-                            //     color: Colors.white,
-                            //   ),
+                  color: Colors.transparent,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 0, bottom: 10),
+                    child: Stack(
+                      alignment: Alignment.bottomCenter,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [_controlsConfiguration.qualityIcon],
+                        ),
+                        Positioned(
+                          left: 12,
+                          child: Column(
+                            children: [
+                              children.isEmpty
+                                  ? Stack(
+                                      alignment: Alignment.bottomCenter,
+                                      children: <Widget>[
+                                        // Stroked text as border.
+                                        Text(
+                                          selectedTrack != null
+                                              ? '${selectedTrack.width}p'
+                                              : 'Auto',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            foreground: Paint()
+                                              ..style = PaintingStyle.stroke
+                                              ..strokeWidth = 6
+                                              ..color =
+                                                  AppTheme.backgroundColor,
+                                          ),
+                                        ),
+                                        // Solid text as fill.
+                                        Text(
+                                          selectedTrack != null
+                                              ? '${selectedTrack.width}p'
+                                              : 'Auto',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            color: AppTheme.activeButtonColor,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : Stack(
+                                      alignment: Alignment.bottomCenter,
+                                      children: <Widget>[
+                                        // Stroked text as border.
+                                        Text(
+                                          selectedResolution != null
+                                              ? '${selectedResolution.name}p'
+                                              : 'Auto',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            foreground: Paint()
+                                              ..style = PaintingStyle.stroke
+                                              ..strokeWidth = 6
+                                              ..color =
+                                                  AppTheme.backgroundColor,
+                                          ),
+                                        ),
+                                        // Solid text as fill.
+                                        Text(
+                                          selectedResolution != null
+                                              ? '${selectedResolution.name}p'
+                                              : 'Auto',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            color: AppTheme.activeButtonColor,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                            ],
                           ),
-                          Positioned(
-                            left: 12,
-                            child: Column(
-                              children: [
-                                children.isEmpty
-                                    ? Stack(
-                                        alignment: Alignment.bottomCenter,
-                                        children: <Widget>[
-                                          // Stroked text as border.
-                                          Text(
-                                            selectedTrack != null
-                                                ? '${selectedTrack.width}p'
-                                                : 'Auto',
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              foreground: Paint()
-                                                ..style = PaintingStyle.stroke
-                                                ..strokeWidth = 6
-                                                ..color =
-                                                    AppTheme.backgroundColor,
-                                            ),
-                                          ),
-                                          // Solid text as fill.
-                                          Text(
-                                            selectedTrack != null
-                                                ? '${selectedTrack.width}p'
-                                                : 'Auto',
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              color: AppTheme.activeButtonColor,
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Stack(
-                                        alignment: Alignment.bottomCenter,
-                                        children: <Widget>[
-                                          // Stroked text as border.
-                                          Text(
-                                            selectedResolution != null
-                                                ? '${selectedResolution.name}p'
-                                                : 'Auto',
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              foreground: Paint()
-                                                ..style = PaintingStyle.stroke
-                                                ..strokeWidth = 6
-                                                ..color =
-                                                    AppTheme.backgroundColor,
-                                            ),
-                                          ),
-                                          // Solid text as fill.
-                                          Text(
-                                            selectedResolution != null
-                                                ? '${selectedResolution.name}p'
-                                                : 'Auto',
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              color: AppTheme.activeButtonColor,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
+                        )
+                      ],
                     ),
                   ),
                 ),
-              )),
-        ),
+              ),
+            )),
       ),
     );
   }

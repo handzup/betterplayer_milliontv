@@ -8,22 +8,22 @@ class Menu extends StatelessWidget {
     @required this.children,
   }) : super(key: key);
 
-  final List<Widget> children;
+  final Widget children;
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(boxShadow: [
         BoxShadow(
             blurRadius: 90,
             spreadRadius: 110,
             color: AppTheme.backgroundColor.withOpacity(.7))
       ]),
-      child: IntrinsicHeight(
-        child: Column(
-          children: children,
-        ),
-      ),
+      child: SizedBox(
+          width: 80,
+          height: MediaQuery.of(context).size.height / 1.5,
+          child: children),
     );
   }
 }
