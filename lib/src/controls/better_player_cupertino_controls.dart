@@ -789,7 +789,10 @@ class _BetterPlayerCupertinoControlsState
                       ),
                     ),
                   )
-                : SizedBox.shrink()),
+                : SizedBox(
+                    width: 80,
+                    height: 30,
+                  )),
       ),
     );
   }
