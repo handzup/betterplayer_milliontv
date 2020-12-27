@@ -52,7 +52,9 @@ class _BetterPlayerCupertinoControlsState
   Timer _initTimer;
   bool _displayTapped = false;
   bool _dragging = false;
-
+  BetterPlayerHlsTrack selectedTrack;
+  Resolution selectedResolution;
+  bool _showMenu = false;
   bool _wasLoading = false;
   AnimationController playPauseIconAnimationController;
 
@@ -169,46 +171,6 @@ class _BetterPlayerCupertinoControlsState
             ),
           ),
         ),
-
-        // Stack(
-        //   children: [
-        //     _buildTopBar(backgroundColor, iconColor, barHeight, buttonPadding),
-        //     GestureDetector(
-        //       onTap: cancelAndRestartTimer,
-        //       onDoubleTap: () {
-        //         cancelAndRestartTimer();
-        //         _playPause();
-        //       },
-        //       child: AbsorbPointer(
-        //         absorbing: _hideStuff,
-        //         child: Stack(
-        //           children: <Widget>[
-        //             Column(
-        //               children: [
-        //                 _wasLoading
-        //                     ? Expanded(
-        //                         child: Center(child: _buildLoadingWidget()))
-        //                     : _buildHitArea(),
-        //               ],
-        //             ),
-        //             _buildNextVideoWidget(),
-        //             Positioned(
-        //                 left: 16,
-        //                 right: 16,
-        //                 bottom: _betterPlayerController.isFullScreen ? 30 : 40,
-        //                 child: SizedBox(
-        //                     height:
-        //                         betterPlayerController.isFullScreen ? 80 : 145,
-        //                     child: _buildBottomBar(
-        //                       backgroundColor,
-        //                       iconColor,
-        //                     ))),
-        //           ],
-        //         ),
-        //       ),
-        //     ),
-        //   ],
-        // ),
       ),
     );
   }
@@ -510,35 +472,6 @@ class _BetterPlayerCupertinoControlsState
     );
   }
 
-  // Expanded _buildHitArea() {
-  //   return Expanded(
-  //     child: GestureDetector(
-  //       onTap: _latestValue != null && _latestValue.isPlaying
-  //           ? () {
-  //               if (_hideStuff == true) {
-  //                 cancelAndRestartTimer();
-  //               } else {
-  //                 _hideTimer?.cancel();
-
-  //                 setState(() {
-  //                   _hideStuff = true;
-  //                 });
-  //               }
-  //             }
-  //           : () {
-  //               _hideTimer?.cancel();
-
-  //               setState(() {
-  //                 _hideStuff = false;
-  //               });
-  //             },
-  //       child: Container(
-  //         color: Colors.transparent,
-  //       ),
-  //     ),
-  //   );
-  // }
-
   Expanded _buildHitArea() {
     bool isFinished = _latestValue == null
         ? false
@@ -701,68 +634,6 @@ class _BetterPlayerCupertinoControlsState
     });
   }
 
-  // Widget _buildResolutionSelectionRow(String name, String url) {
-  //   bool isSelected = url == betterPlayerController.betterPlayerDataSource.url;
-  //   return BetterPlayerMaterialClickableWidget(
-  //     child: Padding(
-  //       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-  //       child: Row(
-  //         children: [
-  //           const SizedBox(width: 16),
-  //           Text(
-  //             "$name",
-  //             style: TextStyle(
-  //               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //     onTap: () {
-  //       Navigator.of(context).pop();
-  //       betterPlayerController.setResolution(url);
-  //     },
-  //   );
-  // }
-
-  // Widget _buildTrackRow(BetterPlayerHlsTrack track, String preferredName) {
-  //   assert(track != null, "Track can't be null");
-
-  //   String trackName = preferredName ??
-  //       track.width.toString() +
-  //           "x" +
-  //           track.height.toString() +
-  //           " " +
-  //           BetterPlayerUtils.formatBitrate(track.bitrate);
-
-  //   var selectedTrack = betterPlayerController.betterPlayerTrack;
-  //   bool isSelected = selectedTrack != null && selectedTrack == track;
-
-  //   return BetterPlayerMaterialClickableWidget(
-  //     child: Padding(
-  //       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-  //       child: Row(
-  //         children: [
-  //           const SizedBox(width: 16),
-  //           Text(
-  //             "$trackName",
-  //             style: TextStyle(
-  //               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //     onTap: () {
-  //       Navigator.of(context).pop();
-  //       betterPlayerController.setTrack(track);
-  //     },
-  //   );
-  // }
-
-  BetterPlayerHlsTrack selectedTrack;
-  Resolution selectedResolution;
-  bool _showMenu = false;
   void drDownTap() {
     setState(() => _showMenu = true);
   }
@@ -775,13 +646,16 @@ class _BetterPlayerCupertinoControlsState
     List<BetterPlayerHlsTrack> tracks =
         betterPlayerController.betterPlayerTracks;
     selectedTrack = betterPlayerController.betterPlayerTrack;
+
     var children = List<Resolution>();
 
     var resolutions = betterPlayerController.betterPlayerDataSource.resolutions;
     resolutions?.forEach((key, value) {
+      value == betterPlayerController.betterPlayerDataSource.url
+          ? selectedResolution = Resolution(name: key, url: value)
+          : null;
       children.add(Resolution(name: key, url: value));
     });
-
     return AnimatedOpacity(
       opacity: _hideStuff ? 0.0 : 1.0,
       duration: _controlsConfiguration.controlsHideTime,
@@ -793,188 +667,129 @@ class _BetterPlayerCupertinoControlsState
             childAnchor: Alignment.topCenter,
             menuAnchor: Alignment.bottomCenter,
             menu: Menu(
-                children: (children.isNotEmpty || tracks.isNotEmpty)
-                    ? (children.isEmpty
-                        ? ListView.builder(
-                            shrinkWrap: true,
-                            reverse: true,
-                            physics: BouncingScrollPhysics(),
-                            itemCount: tracks.length,
-                            itemBuilder: (_, index) => ItemCard(
-                                  track: tracks[index],
-                                  onTap: (track) => {
-                                    betterPlayerController.setTrack(track),
-                                    setState(() => selectedTrack = track)
-                                  },
-                                  isSelected: tracks[index] == selectedTrack,
-                                ))
-                        : ListView.builder(
-                            shrinkWrap: true,
-                            reverse: true,
-                            physics: BouncingScrollPhysics(),
-                            itemCount: children.length,
-                            itemBuilder: (_, index) => ResolutionCard(
-                              track: children[index],
+                children: (betterPlayerController.isLiveStream()
+                    ? ListView.builder(
+                        shrinkWrap: true,
+                        reverse: true,
+                        physics: BouncingScrollPhysics(),
+                        itemCount: tracks.length,
+                        itemBuilder: (_, index) => ItemCard(
+                              track: tracks[index],
                               onTap: (track) => {
-                                betterPlayerController.setResolution(track.url),
-                                setState(() => selectedResolution = track)
+                                betterPlayerController.setTrack(track),
+                                setState(() => selectedTrack = track)
                               },
-                              isSelected: children[index].name ==
-                                  selectedResolution?.name,
-                            ),
-                          ))
-                    : SizedBox.shrink()),
-            child: GestureDetector(
-              onTap: () => drDownTap(),
-              child: Container(
-                width: 80,
-                height: 30,
-                child: Container(
-                  color: Colors.transparent,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 0, bottom: 10),
-                    child: Stack(
-                      alignment: Alignment.bottomCenter,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [_controlsConfiguration.qualityIcon],
+                              isSelected: tracks[index] == selectedTrack,
+                            ))
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        reverse: true,
+                        physics: BouncingScrollPhysics(),
+                        itemCount: children.length,
+                        itemBuilder: (_, index) => ResolutionCard(
+                          track: children[index],
+                          onTap: (track) => {
+                            betterPlayerController.setResolution(track.url),
+                            setState(() => selectedResolution = track)
+                          },
+                          isSelected:
+                              children[index].name == selectedResolution?.name,
                         ),
-                        Positioned(
-                          left: 12,
-                          child: Column(
+                      ))),
+            child: (children.isNotEmpty || tracks.isNotEmpty)
+                ? GestureDetector(
+                    onTap: () => drDownTap(),
+                    child: Container(
+                      width: 80,
+                      height: 30,
+                      child: Container(
+                        color: Colors.transparent,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 0, bottom: 10),
+                          child: Stack(
+                            alignment: Alignment.bottomCenter,
                             children: [
-                              children.isEmpty
-                                  ? Stack(
-                                      alignment: Alignment.bottomCenter,
-                                      children: <Widget>[
-                                        // Stroked text as border.
-                                        Text(
-                                          selectedTrack != null
-                                              ? '${selectedTrack.width}p'
-                                              : 'Auto',
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            foreground: Paint()
-                                              ..style = PaintingStyle.stroke
-                                              ..strokeWidth = 6
-                                              ..color =
-                                                  AppTheme.backgroundColor,
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [_controlsConfiguration.qualityIcon],
+                              ),
+                              Positioned(
+                                left: 12,
+                                child: Column(
+                                  children: [
+                                    betterPlayerController.isLiveStream()
+                                        ? Stack(
+                                            alignment: Alignment.bottomCenter,
+                                            children: <Widget>[
+                                              // Stroked text as border.
+                                              Text(
+                                                selectedTrack != null
+                                                    ? '${selectedTrack.width}p'
+                                                    : 'Auto',
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  foreground: Paint()
+                                                    ..style =
+                                                        PaintingStyle.stroke
+                                                    ..strokeWidth = 6
+                                                    ..color = AppTheme
+                                                        .backgroundColor,
+                                                ),
+                                              ),
+                                              // Solid text as fill.
+                                              Text(
+                                                selectedTrack != null
+                                                    ? '${selectedTrack.width}p'
+                                                    : 'Auto',
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  color: AppTheme
+                                                      .activeButtonColor,
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        : Stack(
+                                            alignment: Alignment.bottomCenter,
+                                            children: <Widget>[
+                                              // Stroked text as border.
+                                              Text(
+                                                selectedResolution != null
+                                                    ? '${selectedResolution.name}p'
+                                                    : 'Auto',
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  foreground: Paint()
+                                                    ..style =
+                                                        PaintingStyle.stroke
+                                                    ..strokeWidth = 6
+                                                    ..color = AppTheme
+                                                        .backgroundColor,
+                                                ),
+                                              ),
+                                              // Solid text as fill.
+                                              Text(
+                                                selectedResolution != null
+                                                    ? '${selectedResolution.name}p'
+                                                    : 'Auto',
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  color: AppTheme
+                                                      .activeButtonColor,
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ),
-                                        // Solid text as fill.
-                                        Text(
-                                          selectedTrack != null
-                                              ? '${selectedTrack.width}p'
-                                              : 'Auto',
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            color: AppTheme.activeButtonColor,
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  : Stack(
-                                      alignment: Alignment.bottomCenter,
-                                      children: <Widget>[
-                                        // Stroked text as border.
-                                        Text(
-                                          selectedResolution != null
-                                              ? '${selectedResolution.name}p'
-                                              : 'Auto',
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            foreground: Paint()
-                                              ..style = PaintingStyle.stroke
-                                              ..strokeWidth = 6
-                                              ..color =
-                                                  AppTheme.backgroundColor,
-                                          ),
-                                        ),
-                                        // Solid text as fill.
-                                        Text(
-                                          selectedResolution != null
-                                              ? '${selectedResolution.name}p'
-                                              : 'Auto',
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            color: AppTheme.activeButtonColor,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                  ],
+                                ),
+                              )
                             ],
                           ),
-                        )
-                      ],
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
-            )),
-      ),
-    );
-  }
-
-  GestureDetector _buildMuteButton(
-    VideoPlayerController controller,
-    Color backgroundColor,
-    Color iconColor,
-    double barHeight,
-    double buttonPadding,
-  ) {
-    return GestureDetector(
-      onTap: () {
-        cancelAndRestartTimer();
-
-        if (_latestValue.volume == 0) {
-          controller.setVolume(_latestVolume ?? 0.5);
-        } else {
-          _latestVolume = controller.value.volume;
-          controller.setVolume(0.0);
-        }
-      },
-      child: AnimatedOpacity(
-        opacity: _hideStuff ? 0.0 : 1.0,
-        duration: _controlsConfiguration.controlsHideTime,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(10.0),
-          child: BackdropFilter(
-            filter: ui.ImageFilter.blur(sigmaX: 10.0),
-            child: Container(
-              color: backgroundColor,
-              child: Container(
-                height: barHeight,
-                padding: EdgeInsets.symmetric(
-                  horizontal: buttonPadding,
-                ),
-                child: Icon(
-                  (_latestValue != null && _latestValue.volume > 0)
-                      ? _controlsConfiguration.muteIcon
-                      : _controlsConfiguration.unMuteIcon,
-                  color: iconColor,
-                  size: 16.0,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  GestureDetector _buildPlayPause(
-    VideoPlayerController controller,
-    Color iconColor,
-  ) {
-    return GestureDetector(
-      onTap: _onPlayPause,
-      child: Icon(
-        controller.value.isPlaying
-            ? _controlsConfiguration.pauseIcon
-            : _controlsConfiguration.playIcon,
-        color: iconColor,
-        size: 16.0,
+                  )
+                : SizedBox.shrink()),
       ),
     );
   }
@@ -996,20 +811,6 @@ class _BetterPlayerCupertinoControlsState
     return Text(
       '${BetterPlayerUtils.formatDuration(duration)}',
       style: _controlsConfiguration.textStyle,
-    );
-  }
-
-  Widget _buildRemaining() {
-    final position = _latestValue != null && _latestValue.duration != null
-        ? _latestValue.duration - _latestValue.position
-        : Duration(seconds: 0);
-
-    return Padding(
-      padding: const EdgeInsets.only(right: 12.0),
-      child: Text(
-        '-${BetterPlayerUtils.formatDuration(position)}',
-        style: TextStyle(color: Colors.white, fontSize: 12.0),
-      ),
     );
   }
 
@@ -1204,38 +1005,6 @@ class _BetterPlayerCupertinoControlsState
         ),
       ),
     );
-  }
-
-  void _onPlayPause() {
-    bool isFinished = false;
-
-    if (_latestValue?.position != null && _latestValue?.duration != null) {
-      isFinished = _latestValue.position >= _latestValue.duration;
-    }
-
-    setState(() {
-      if (_controller.value.isPlaying) {
-        _hideStuff = false;
-        _hideTimer?.cancel();
-        _betterPlayerController.pause();
-      } else {
-        cancelAndRestartTimer();
-
-        if (!_controller.value.initialized) {
-          if (_betterPlayerController.betterPlayerDataSource?.liveStream ==
-              true) {
-            _betterPlayerController.play();
-            _betterPlayerController.cancelNextVideoTimer();
-          }
-        } else {
-          if (isFinished) {
-            _betterPlayerController.seekTo(Duration(seconds: 0));
-          }
-          _betterPlayerController.play();
-          _betterPlayerController.cancelNextVideoTimer();
-        }
-      }
-    });
   }
 
   void _startHideTimer() {
