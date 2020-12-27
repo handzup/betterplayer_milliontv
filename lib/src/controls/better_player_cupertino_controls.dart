@@ -776,19 +776,11 @@ class _BetterPlayerCupertinoControlsState
         betterPlayerController.betterPlayerTracks;
     selectedTrack = betterPlayerController.betterPlayerTrack;
     var children = List<Resolution>();
-    // for (var index = 0; index < tracks.length; index++) {
-    //   var preferredName = trackNames.length > index ? trackNames[index] : null;
-    //   children.add(_buildTrackRow(tracks[index], preferredName));
-    // }
+
     var resolutions = betterPlayerController.betterPlayerDataSource.resolutions;
     resolutions?.forEach((key, value) {
       children.add(Resolution(name: key, url: value));
     });
-
-    // if (children.isEmpty) {
-    //   children.add(_buildTrackRow(BetterPlayerHlsTrack(0, 0, 0),
-    //       betterPlayerController.translations.generalDefault));
-    // }
 
     return AnimatedOpacity(
       opacity: _hideStuff ? 0.0 : 1.0,
@@ -801,47 +793,37 @@ class _BetterPlayerCupertinoControlsState
             childAnchor: Alignment.topCenter,
             menuAnchor: Alignment.bottomCenter,
             menu: Menu(
-                children: children.isEmpty
-                    ? ListView.builder(
-                        shrinkWrap: true,
-                        reverse: true,
-                        physics: BouncingScrollPhysics(),
-                        itemCount: tracks.length,
-                        itemBuilder: (_, index) => ItemCard(
-                              track: tracks[index],
+                children: (children.isNotEmpty || tracks.isNotEmpty)
+                    ? (children.isEmpty
+                        ? ListView.builder(
+                            shrinkWrap: true,
+                            reverse: true,
+                            physics: BouncingScrollPhysics(),
+                            itemCount: tracks.length,
+                            itemBuilder: (_, index) => ItemCard(
+                                  track: tracks[index],
+                                  onTap: (track) => {
+                                    betterPlayerController.setTrack(track),
+                                    setState(() => selectedTrack = track)
+                                  },
+                                  isSelected: tracks[index] == selectedTrack,
+                                ))
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            reverse: true,
+                            physics: BouncingScrollPhysics(),
+                            itemCount: children.length,
+                            itemBuilder: (_, index) => ResolutionCard(
+                              track: children[index],
                               onTap: (track) => {
-                                betterPlayerController.setTrack(track),
-                                setState(() => selectedTrack = track)
+                                betterPlayerController.setResolution(track.url),
+                                setState(() => selectedResolution = track)
                               },
-                              isSelected: tracks[index] == selectedTrack,
-                            ))
-                    : ListView.builder(
-                        shrinkWrap: true,
-                        reverse: true,
-                        physics: BouncingScrollPhysics(),
-                        itemCount: children.length,
-                        itemBuilder: (_, index) => ResolutionCard(
-                          track: children[index],
-                          onTap: (track) => {
-                            betterPlayerController.setResolution(track.url),
-                            setState(() => selectedResolution = track)
-                          },
-                          isSelected:
-                              children[index].name == selectedResolution?.name,
-                        ),
-                      )),
-            //       List.generate(
-            //   children.length,
-            //   (index) => ResolutionCard(
-            //     track: children[index],
-            //     onTap: (track) => {
-            //       betterPlayerController.setResolution(track.url),
-            //       setState(() => selectedResolution = track)
-            //     },
-            //     isSelected:
-            //         children[index].name == selectedResolution?.name,
-            //   ),
-            // )),
+                              isSelected: children[index].name ==
+                                  selectedResolution?.name,
+                            ),
+                          ))
+                    : SizedBox.shrink()),
             child: GestureDetector(
               onTap: () => drDownTap(),
               child: Container(
